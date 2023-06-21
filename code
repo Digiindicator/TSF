@@ -1,0 +1,70 @@
+//@version=5
+indicator("target and stop loss finder",shorttitle = "TSF" ,overlay=true)
+Processingtype = input.string(defval='1W-4H',title="Structure Timeframe - Entry Timeframe",options=['1W-4H','1D-1H','4H-30m','1H-15m','30m-5m','15m-1m'],confirm=true)
+patternLabelPosHigh = high[1] + (ta.atr(30) * 0.6)
+
+x = 24
+y = 24
+z = 24
+if Processingtype=='1W-4H'
+    x==55
+    y==22
+    z==30
+if Processingtype=='1D-1H'
+    x==22
+    y==30
+    z==24
+if Processingtype=='4H-30m'
+    x==30
+    y==24
+    z==24
+if Processingtype=='1H-15m'
+    x==24
+    y==24
+    z==24
+if Processingtype=='30m-5m'
+    x==24
+    y==24
+    z==24
+if Processingtype=='15m-1m'
+    x==24
+    y==24
+    z==24
+Structure = input.timeframe(defval="60",confirm=true)
+entry = input.timeframe(defval="5",confirm=true)
+S = request.security('',Structure,ta.atr(x)[1])
+E = request.security('',entry,ta.atr(z)[1])
+pos=input.string(title='Position',defval='Buy',options=['Buy','Sell'],confirm=true)
+var table3 = table.new(position = position.top_right, columns = 10, rows = 10)
+table.cell(table_id = table3, column = 0, row = 1, text = "👨‍💻digiindicator.ir👨‍💻 \n ▪️▪️▪️▪️▪️▪️▪️▪️▪️▪️ \n processing types: ", bgcolor = color.yellow,text_color=color.black)
+table.cell(table_id = table3, column = 0, row = 2, text = " 1W 1D 4H \n  1D 4H 1H \n   4H 1H 30m \n 1H 30m 15m \n 30m 15m 5m \n 15m 5m 1m \n", bgcolor = color.yellow,text_color=color.black)
+table.cell(table_id = table3, column = 0, row = 3, text = "\n tp: " + str.tostring(S-E,format.mintick) + "\n" + "sl: " + str.tostring(E,format.mintick), bgcolor = color.yellow,text_color=color.black)
+
+optcly=input.int(defval=80)
+tp = S-E
+ls = E
+dec=input.int(title='decimal of percents',defval=2)
+factor=math.pow(10,dec)
+darsadsl=(((close[1]+ls)/close[1])*100*(-1))+100
+darsadtp=(((close[1]+tp)/close[1])*100)-100
+slpercent=int(darsadsl * factor)/factor
+tppercent=int(darsadtp * factor)/factor
+if pos=='Buy'
+    buy_stop = box.new(right=bar_index-1,left=bar_index+5,top=close[1],bottom=close[1]-ls,bgcolor=color.new(#f23645,optcly),border_color=color.new(#f23645,optcly),text=str.tostring(slpercent),text_size=size.normal,text_valign=text.align_bottom,text_color=color.new(#ff0000,1))
+    buy_target = box.new(right=bar_index-1,left=bar_index+5,top=close[1]+tp,bottom=close[1],bgcolor=color.new(#079a80,optcly),border_color=color.new(#079a80,optcly),text=str.tostring(tppercent),text_size=size.normal,text_valign=text.align_top,text_color=color.new(#37fd12,1))
+    box.delete(buy_stop[1])
+    box.delete(buy_target[1])
+if pos=='Sell'
+    sell_stop = box.new(right=bar_index-1,left=bar_index+5,top=close[1]+ls,bottom=close[1],bgcolor=color.new(#f23645,optcly),border_color=color.new(#f23645,optcly),text=str.tostring(slpercent),text_size=size.normal,text_valign=text.align_top,text_color=color.new(#ff0000,1))
+    sell_target = box.new(right=bar_index-1,left=bar_index+5,top=close[1],bottom=close[1]-tp,bgcolor=color.new(#079a80,optcly),border_color=color.new(#079a80,optcly),text=str.tostring(tppercent),text_size=size.normal,text_valign=text.align_bottom,text_color=color.new(#37fd12,1))
+    box.delete(sell_stop[1])
+    box.delete(sell_target[1])
+
+/////////////////////For n Bar Befor Now//////////////////////////
+i_switch = input.bool(false, "Show previous information On/Off")
+if i_switch==true
+    table.cell(table_id = table3, column = 0, row = 4, text = "\n tp: " + str.tostring(S-E,format.mintick)[1] + "\n" + "sl: " + str.tostring(E,format.mintick)[1], bgcolor = color.yellow,text_color=color.black)
+    table.cell(table_id = table3, column = 0, row = 5, text = "\n tp: " + str.tostring(S-E,format.mintick)[2] + "\n" + "sl: " + str.tostring(E,format.mintick)[2], bgcolor = color.yellow,text_color=color.black)
+    table.cell(table_id = table3, column = 0, row = 6, text = "\n tp: " + str.tostring(S-E,format.mintick)[3] + "\n" + "sl: " + str.tostring(E,format.mintick)[3], bgcolor = color.yellow,text_color=color.black)
+    table.cell(table_id = table3, column = 0, row = 7, text = "\n tp: " + str.tostring(S-E,format.mintick)[4] + "\n" + "sl: " + str.tostring(E,format.mintick)[4], bgcolor = color.yellow,text_color=color.black)
+    table.cell(table_id = table3, column = 0, row = 8, text = "\n tp: " + str.tostring(S-E,format.mintick)[5] + "\n" + "sl: " + str.tostring(E,format.mintick)[5], bgcolor = color.yellow,text_color=color.black)
